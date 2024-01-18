@@ -16,53 +16,26 @@
         <header class="col-10">
             <h1>Trends in sociology research</h1>
         </header>
-        
-    </body>
-    <pre><code>
-        &lt;script&gt;
-          d3.csv("https://github.com/siljeberiksen/information_visulation/blob/main/scimagojr%202022.csv")
-            .then(makeChart);
-        &lt;/script&gt;
-    </code></pre>
-    <pre><code>
-        // Plot the data with Chart.js
-        function makeChart(data) {
-
-            console.log(d)
-          var titleLabels = data.map(function (d) { return d.Title; });
-          var Quartile = data.map(function (d) { return d.SJR Best Quartile; });
-    
-          var chart = new Chart("myChart", {
-            type: "bar",
-            data: {
-              labels: titleLabels,
-              datasets: [
-                {
-                  label: "Mondrian's artworks",
-                  data: Quartile,
-                  backgroundColor: 'rgb(255, 99, 132)',
-                }
-              ]
-            }
-          });
-        }
+        <section>
+            <h2>Et voilà!</h2>
+            <canvas id="myChart"></canvas>
+        </section>
         <script>
-            d3.csv("https://github.com/siljeberiksen/information_visulation/blob/main/scimagojr%202022.csv").then(makeChart);
+            d3.dsv(";","https://raw.githubusercontent.com/siljeberiksen/information_visulation/main/scimagojr%202022.csv").then(makeChart);
       
             // Plot the data with Chart.js
             function makeChart(data) {
-                console.log(d)
+                data.map(function (d) {console.log(d['SJR Best Quartile'].replace(/[^0-9]/g, '')); });
                 var titleLabels = data.map(function (d) { return d.Title; });
-                //var Quartile = data.map(function (d) { return d.SJR Best Quartile; });
-
+                var quartile = data.map(function (d) { return d['SJR Best Quartile'].replace(/[^0-9]/g, ''); });
                 var chart = new Chart("myChart", {
                 type: "bar",
                 data: {
                 labels: titleLabels,
                 datasets: [
                     {
-                    label: "Mondrian's artworks",
-                    data: Quartile,
+                    label: "Names of publishers vs quartile",
+                    data: quartile,
                     backgroundColor: 'rgb(255, 99, 132)',
                     }
                 ]
@@ -70,5 +43,5 @@
                 });
                 }
             </script>
-    </code></pre>
+        </body>
 </html>
