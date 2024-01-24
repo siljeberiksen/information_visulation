@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Scopus project</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js">
+        </script>
+    </head>
+
+    <body class="container-fluid">
+        <header class="col-10">
+            <h1>Trends in sociology research</h1>
+        </header>
+        <section>
+            <h2>Et voilà!</h2>
+            <canvas id="myChart"></canvas>
+        </section>
+        <script>
+            d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/Count_yearly_publications.csv").then(makeChart);
+      
+            // Plot the data with Chart.js
+            function makeChart(data) {
+                var year = data.map(function (d) { return d.year; });
+                var count = data.map(function (d) { return d.year_index});
+                var chart = new Chart("myChart", {
+                type: "bar",
+                data: {
+                labels: year,
+                datasets: [
+                    {
+                    label: "Number of publication per year",
+                    data: count,
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    }
+                ]
+                }
+                });
+                }
+            </script>
+        </body>
+</html>
