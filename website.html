@@ -20,7 +20,8 @@
         <section>
             <h2>The interest in sociology research is growing</h2>
             <canvas id="yearlyChart" width="400" height="300"></canvas>
-            <canvas id="keywordChart" width="400" height="300"></canvas>    
+            <canvas id="keywordChart" width="400" height="300"></canvas>   
+            <canvas id="quartileChart" width="400" height="300"></canvas>  
             <canvas id="wordCloud" width="400" height="300"></canvas>           
         </section>
         <script>
@@ -58,7 +59,7 @@
                     var keyword = data.map(function (d) { return d.keyword; });
                     var count = data.map(function (d) { return d.count});
                     // Check if the chart instance exists and destroy it
-                    var existingChart = Chart.getChart("keywordChart");
+                    var existingChart = Chart.getChart("quartileChart");
                     if (existingChart) {
                         existingChart.destroy();
                     }
@@ -76,7 +77,60 @@
                     }
                     });
                 }
-            </script>  
+            </script> 
+
+            <script>
+                d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/Count_quartile_year.csv").then(makeChartQuartile);
+
+                function makeChartQuartile(data) {
+                    var year = data.map(function (d) { return d.year; });
+                    var count = data.map(function (d) { return d.count});
+                    var quartile = data.map(function (d) { return d.quartile});
+                    
+                    // Process data to create datasets
+                    var datasets = {};
+                    for (var i = 0; i < year.length; i++) {
+                        var y = year[i];
+                        var q = quartile[i];
+                        if (!datasets[q]) {
+                            datasets[q] = { label: q, backgroundColor: [], data: [] };
+                        }
+                        datasets[q].backgroundColor.push(getRandomColor());
+                        datasets[q].data.push(count[i]);
+                        }
+
+                        // Create a random color function (for demonstration purposes)
+                        function getRandomColor() {
+                        var letters = '0123456789ABCDEF';
+                        var color = '#';
+                        for (var i = 0; i < 6; i++) {
+                            color += letters[Math.floor(Math.random() * 16)];
+                        }
+                        return color;
+                        }
+
+                    var existingChart = Chart.getChart("quartileChart");
+                    if (existingChart) {
+                        existingChart.destroy();
+                    }
+                    var chart = new Chart("quartileChart", {
+                    type: "bar",
+                    data: {
+                        labels: year,
+                        datasets: Object.values(datasets)}
+                        ,
+                    options: {
+                    scales: {
+                    x: { stacked: true },
+                    y: { stacked: true }
+                    }}
+                });
+                }
+            </script> 
+            
+            
+
+
             <script>
                 d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/keyword_count.csv").then(makeChartCloud);
 
