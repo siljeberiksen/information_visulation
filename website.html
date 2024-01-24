@@ -83,31 +83,35 @@
                 d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/Count_quartile_year.csv").then(makeChartQuartile);
 
                 function makeChartQuartile(data) {
-                    var year = data.map(function (d) { return d.year; });
-                    var count = data.map(function (d) { return d.count});
+                    var years = data.map(function (d) { return d.year; });
+                    var counts = data.map(function (d) { return d.count});
                     var quartile = data.map(function (d) { return d.quartile});
+
+                    var colors = [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        // Add more colors as needed
+                    ];
                     
                     // Process data to create datasets
                     var datasets = {};
-                    for (var i = 0; i < year.length; i++) {
-                        var y = year[i];
-                        var q = quartile[i];
-                        if (!datasets[q]) {
-                            datasets[q] = { label: q, backgroundColor: [], data: [] };
-                        }
-                        datasets[q].backgroundColor.push(getRandomColor());
-                        datasets[q].data.push(count[i]);
-                        }
+                    var colorNumber = 0;
+                    let uniqueYears = new Set();
+                    data.forEach(function (d){
 
-                        // Create a random color function (for demonstration purposes)
-                        function getRandomColor() {
-                        var letters = '0123456789ABCDEF';
-                        var color = '#';
-                        for (var i = 0; i < 6; i++) {
-                            color += letters[Math.floor(Math.random() * 16)];
+                        if (!datasets[d.quartile]) {
+                            datasets[d.quartile] = { label: d.quartile, backgroundColor: colors[colorNumber], data: [] };
+                            colorNumber +=1
                         }
-                        return color;
+                        if (!uniqueYears.has(d.year)){
+                            uniqueYears.add(d.year);
                         }
+                        datasets[d.quartile].data.push(d.Count);
+                    });
+                    console.log(datasets);
+                    console.log(uniqueYears);
 
                     var existingChart = Chart.getChart("quartileChart");
                     if (existingChart) {
@@ -116,7 +120,7 @@
                     var chart = new Chart("quartileChart", {
                     type: "bar",
                     data: {
-                        labels: year,
+                        labels: Array.from(uniqueYears),
                         datasets: Object.values(datasets)}
                         ,
                     options: {
