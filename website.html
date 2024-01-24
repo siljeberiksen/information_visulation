@@ -13,20 +13,20 @@
     </head>
 
     <body class="container-fluid">
-        <header class="col-10">
+        <!-- <header class="col-10">
             <h1>Trends in sociology research</h1>
-        </header>
+        </header> -->
         <section>
-            <h2>Et voilà!</h2>
+            <h2>The interest in sociology research is growing</h2>
             <canvas id="myChart"></canvas>
         </section>
         <script>
             d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/Count_yearly_publications.csv").then(makeChart);
-      
+
             // Plot the data with Chart.js
             function makeChart(data) {
-                var year = data.map(function (d) { return d.year_index; });
-                var count = data.map(function (d) { return d.year});
+                var year = data.map(function (d) { return d.year; });
+                var count = data.map(function (d) { return d.count});
                 var chart = new Chart("myChart", {
                 type: "bar",
                 data: {
@@ -40,7 +40,28 @@
                 ]
                 }
                 });
-                }
+            }
             </script>
+            <script>
+                d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/keyword_count.csv").then(makeChartKeyWord);
+      
+                function makeChartKeyWord(data) {
+                    var keyword = data.map(function (d) { return d.keyword; });
+                    var count = data.map(function (d) { return d.count});
+                    var chart = new Chart("myChart", {
+                    type: "bar",
+                    data: {
+                    labels: keyword,
+                    datasets: [
+                        {
+                        label: "Number of publication per year",
+                        data: count,
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        }
+                    ]
+                    }
+                    });
+                }
+            </script>    
         </body>
 </html>
