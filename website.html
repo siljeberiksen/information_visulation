@@ -23,7 +23,7 @@
             <canvas id="yearlyChart" width="400" height="100"></canvas>
             <canvas id="keywordChart" width="400" height="100"></canvas>   
             <canvas id="quartileChart" width="400" height="100"></canvas>  
-            <canvas id="wordCloud" width="400" height="100"></canvas>           
+            <div id="wordCloud" width="400" height="100"></canvas>           
         </section>
         <script>
 
@@ -141,9 +141,6 @@
                 });
                 }
             </script> 
-            
-            
-
 
             <script>
                 d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/keyword_count.csv").then(makeChartCloud);
@@ -152,7 +149,7 @@
 
                     // set the dimensions and margins of the graph
                     var margin = {top: 10, right: 10, bottom: 10, left: 10},
-                        width = 450 - margin.left - margin.right,
+                        width = 1000 - margin.left - margin.right,
                         height = 450 - margin.top - margin.bottom;
 
                     // append the svg object to the body of the page
