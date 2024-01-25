@@ -9,6 +9,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-stacked100@1.0.0"></script>
         <!-- Include d3-cloud library -->
         <script src="https://cdn.rawgit.com/jasondavies/d3-cloud/v1.2.0/build/d3.layout.cloud.js"></script>
     </head>
@@ -19,10 +20,10 @@
         </header> -->
         <section>
             <h2>The interest in sociology research is growing</h2>
-            <canvas id="yearlyChart" width="400" height="300"></canvas>
-            <canvas id="keywordChart" width="400" height="300"></canvas>   
-            <canvas id="quartileChart" width="400" height="300"></canvas>  
-            <canvas id="wordCloud" width="400" height="300"></canvas>           
+            <canvas id="yearlyChart" width="400" height="100"></canvas>
+            <canvas id="keywordChart" width="400" height="100"></canvas>   
+            <canvas id="quartileChart" width="400" height="100"></canvas>  
+            <canvas id="wordCloud" width="400" height="100"></canvas>           
         </section>
         <script>
 
@@ -81,7 +82,7 @@
 
             <script>
                 d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/Count_quartile_year.csv").then(makeChartQuartile);
-
+                Chart.register(ChartjsPluginStacked100.default);
                 function makeChartQuartile(data) {
                     var years = data.map(function (d) { return d.year; });
                     var counts = data.map(function (d) { return d.count});
@@ -99,6 +100,7 @@
                     var datasets = {};
                     var colorNumber = 0;
                     let uniqueYears = new Set();
+                    console.log(data)
                     data.forEach(function (d){
 
                         if (!datasets[d.quartile]) {
@@ -108,7 +110,9 @@
                         if (!uniqueYears.has(d.year)){
                             uniqueYears.add(d.year);
                         }
+                        console.log(d)
                         datasets[d.quartile].data.push(d.Count);
+                        console.log(datasets)
                     });
                     console.log(datasets);
                     console.log(uniqueYears);
@@ -124,10 +128,16 @@
                         datasets: Object.values(datasets)}
                         ,
                     options: {
-                    scales: {
-                    x: { stacked: true },
-                    y: { stacked: true }
-                    }}
+                        //remove if we do not want to have percentages
+                        plugins:{
+                            stacked100:{
+                                enable:true,
+                            }
+                        },
+                        scales: {
+                        x: { stacked: true },
+                        y: { stacked: true }
+                        }}
                 });
                 }
             </script> 
