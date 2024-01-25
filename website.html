@@ -61,11 +61,6 @@
                 function makeChartKeyWord(data) {
                     var keyword = data.map(function (d) { return d.keyword; });
                     var count = data.map(function (d) { return d.count});
-                    // Check if the chart instance exists and destroy it
-                    var existingChart = Chart.getChart("quartileChart");
-                    if (existingChart) {
-                        existingChart.destroy();
-                    }
                     var chart = new Chart("keywordChart", {
                     type: "bar",
                     data: {
@@ -102,7 +97,6 @@
                     var datasets = {};
                     var colorNumber = 0;
                     let uniqueYears = new Set();
-                    console.log(data)
                     data.forEach(function (d){
 
                         if (!datasets[d.quartile]) {
@@ -112,12 +106,8 @@
                         if (!uniqueYears.has(d.year)){
                             uniqueYears.add(d.year);
                         }
-                        console.log(d)
                         datasets[d.quartile].data.push(d.Count);
-                        console.log(datasets)
                     });
-                    console.log(datasets);
-                    console.log(uniqueYears);
 
                     var existingChart = Chart.getChart("quartileChart");
                     if (existingChart) {
