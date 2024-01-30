@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Scopus project</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-stacked100@1.0.0"></script>
+        <!-- Include d3-cloud library -->
+        <script src="https://cdn.rawgit.com/jasondavies/d3-cloud/v1.2.0/build/d3.layout.cloud.js"></script>
+    </head>
+
+    <body class="container-fluid">
+        <!-- <header class="col-10">
+            <h1>Trends in sociology research</h1>
+        </header> -->
+        <section>
+            <h2>The interest in sociology research is growing</h2>
+            <canvas id="yearlyChart" width="400" height="100"></canvas>
+            <canvas id="keywordChart" width="400" height="100"></canvas>   
+            <h2>Many of the articles are written in journals with quartile ranking 1</h2>
+            <canvas id="quartileChart" width="400" height="100"></canvas>  
+            <h2>The focus is about enviroment, climate change and sustainability</h2>
+            <div id="wordCloud" width="400" height="100"></canvas>           
+        </section>
+        <script>
+
+            d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/Count_yearly_publications.csv").then(makeChart);
+
+            // Plot the data with Chart.js
+            function makeChart(data) {
+                var year = data.map(function (d) { return d.year; });
+                var count = data.map(function (d) { return d.count});
+                // Check if the chart instance exists and destroy it
+                var existingChart = Chart.getChart("yearlyChart");
+                if (existingChart) {
+                    existingChart.destroy();
+                }
+                var chart = new Chart("yearlyChart", {
+                type: "bar",
+                data: {
+                labels: year,
+                datasets: [
+                    {
+                    label: "Number of publication per year",
+                    data: count,
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    }
+                ]
+                }
+                });
+            }
+            </script>
+            <script>
+                d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/keyword_count.csv").then(makeChartKeyWord);
+
+                function makeChartKeyWord(data) {
+                    var keyword = data.map(function (d) { return d.keyword; });
+                    var count = data.map(function (d) { return d.count});
+                    var chart = new Chart("keywordChart", {
+                    type: "bar",
+                    data: {
+                    labels: keyword,
+                    datasets: [
+                        {
+                        label: "Number of publication per year",
+                        data: count,
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        }
+                    ]
+                    }
+                    });
+                }
+            </script> 
+
+            <script>
+                d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/Count_quartile_year.csv").then(makeChartQuartile);
+                Chart.register(ChartjsPluginStacked100.default);
+                function makeChartQuartile(data) {
+                    var years = data.map(function (d) { return d.year; });
+                    var counts = data.map(function (d) { return d.count});
+                    var quartile = data.map(function (d) { return d.quartile});
+
+                    var colors = [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        // Add more colors as needed
+                    ];
+                    
+                    // Process data to create datasets
+                    var datasets = {};
+                    var colorNumber = 0;
+                    let uniqueYears = new Set();
+                    data.forEach(function (d){
+
+                        if (!datasets[d.quartile]) {
+                            datasets[d.quartile] = { label: d.quartile, backgroundColor: colors[colorNumber], data: [] };
+                            colorNumber +=1
+                        }
+                        if (!uniqueYears.has(d.year)){
+                            uniqueYears.add(d.year);
+                        }
+                        datasets[d.quartile].data.push(d.Count);
+                    });
+
+                    var existingChart = Chart.getChart("quartileChart");
+                    if (existingChart) {
+                        existingChart.destroy();
+                    }
+                    var chart = new Chart("quartileChart", {
+                    type: "bar",
+                    data: {
+                        labels: Array.from(uniqueYears),
+                        datasets: Object.values(datasets)}
+                        ,
+                    options: {
+                        //remove if we do not want to have percentages
+                        plugins:{
+                            stacked100:{
+                                enable:true,
+                            }
+                        },
+                        scales: {
+                        x: { stacked: true },
+                        y: { stacked: true }
+                        }}
+                });
+                }
+            </script> 
+
+            <script>
+                d3.csv("https://raw.githubusercontent.com/siljeberiksen/information_visulation/graph_creation/Data_for_visualization/keyword_count.csv").then(makeChartCloud);
+                function makeChartCloud(data){
+
+                   // set the dimensions and margins of the graph
+                    var margin = {top: 10, right: 10, bottom: 10, left: 10};
+                    var parentDiv = document.getElementById('wordCloud');
+                    var width = parentDiv.clientWidth - margin.left - margin.right;
+                    var height = 450 - margin.top - margin.bottom;
+                    // Calculate horizontal offset to center the SVG element
+                    var horizontalOffset = (parentDiv.clientWidth - width) / 2;
+
+                    // append the svg object to the body of the page 
+                    var svg = d3.select("#wordCloud").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform",
+                            "translate(" + (margin.left +  horizontalOffset) + "," + margin.top + ")");
+                    // Constructs a new cloud layout instance.
+                    var layout = d3.layout.cloud()
+                    .size([width, height])
+                    .words(data.map(function(d) { return {text: d.keyword, size:d.count}; }))
+                    .padding(5)        //space between words
+                    .rotate(function() { return ~~(Math.random() * 2) * 90; })
+                    .fontSize(function(d) { return d.size; })      // font size of words
+                    .on("end", draw);
+                    layout.start();
+
+                    // This function takes the output of 'layout' above and draw the words
+                    function draw(words) {
+                        svg
+                        .append("g")
+                        .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+                        .selectAll("text")
+                            .data(words)
+                        .enter().append("text")
+                            .style("font-size", function(d) { return d.size; })
+                            .style("fill", "rgba(54, 162, 235, 0.7)")
+                            .attr("text-anchor", "middle")
+                            .style("font-family", "Impact")
+                            .attr("transform", function(d) {
+                            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                                                })
+                                    .text(function(d) { return d.text; });
+                        }
+                    }
+                                
+            </script>    
+        </body>
+</html>
